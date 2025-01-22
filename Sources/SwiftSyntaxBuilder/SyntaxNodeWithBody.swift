@@ -402,6 +402,13 @@ extension VariableDeclSyntax {
     try self.init(header, accessors: .getter(accessor()))
   }
   
+  public init(
+    _ header: SyntaxNodeString,
+    @AccessorDeclListBuilder accessors: () throws -> AccessorDeclListSyntax
+  ) throws {
+    try self.init(header, accessors: .accessors(accessors()))
+  }
+  
   private init(
     _ header: SyntaxNodeString,
     accessors: AccessorBlockSyntax.Accessors
