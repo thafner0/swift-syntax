@@ -399,6 +399,14 @@ extension VariableDeclSyntax {
     _ header: SyntaxNodeString,
     @CodeBlockItemListBuilder accessor: () throws -> CodeBlockItemListSyntax
   ) throws {
+    let accessors = AccessorBlockSyntax(accessors: .getter(try accessor()))
+    try self.init(header, accessors: accessors)
+  }
+  
+  private init(
+    _ header: SyntaxNodeString,
+    accessors: AccessorBlockSyntax
+  ) throws {
     let decl = DeclSyntax("\(header) {}")
     guard let castedDecl = decl.as(Self.self) else {
       throw SyntaxStringInterpolationInvalidNodeTypeError(expectedType: Self.self, actualNode: decl)
@@ -406,7 +414,7 @@ extension VariableDeclSyntax {
     self = castedDecl
     precondition(self.bindings.count == 1)
     var binding: PatternBindingSyntax? = self.bindings.last
-    binding?.accessorBlock = AccessorBlockSyntax(accessors: .getter(try accessor()))
+    binding?.accessorBlock = accessors
     bindings = PatternBindingListSyntax([binding].compactMap { $0 })
   }
 }
